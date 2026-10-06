@@ -1,7 +1,23 @@
 pipeline {
     agent any
 
+    environment {
+        FLUTTER_HOME = 'C:\\src\\flutter'
+        PATH = "C:\\src\\flutter\\bin;${env.PATH}"
+    }
+
     stages {
+
+        stage('Check Flutter') {
+            steps {
+                bat '''
+                    echo Checking Flutter...
+                    where flutter
+                    flutter --version
+                    dart --version
+                '''
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
@@ -23,14 +39,13 @@ pipeline {
 
         stage('Build Web') {
             steps {
-                bat 'flutter build web --release'
+                bat 'flutter build web'
             }
         }
 
         stage('Archive Web') {
             steps {
-                archiveArtifacts artifacts: 'build\\web\\**',
-                                  fingerprint: true
+                archiveArtifacts artifacts: 'build/web/**', allowEmptyArchive: false
             }
         }
     }
